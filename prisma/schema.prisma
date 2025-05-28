@@ -1,0 +1,206 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+// TODO: length restriction on strings
+model User {
+  id String @id @default(cuid()) // Using CUID for unique IDs
+
+  role     Role    @default(USER)
+  isBanned Boolean @default(false)
+
+  discordId       String  @unique // Discord's unique snowflake ID
+  discordUsername String
+  displayDiscord  Boolean @default(false)
+
+  artaleId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  listings Listing[]
+}
+
+// TODO: auth tables
+
+enum ItemCategory {
+  // Accessories
+  EARRING
+  EYE_ACCESSORY
+  FACE_ACCESSORY
+  PENDANT
+  BELT
+  MEDAL
+  RING
+  SHOULDERPAD
+  POCKET
+
+  // Armours
+  HAT
+  TOP
+  BOTTOM
+  OVERALL
+  SHOES
+  GLOVES
+  CAPE
+  SHIELD
+
+  TAMING_MOB
+
+  // Weapons
+  ONE_HANDED_SWORD
+  TWO_HANDED_SWORD
+  ONE_HANDED_AXE
+  TWO_HANDED_AXE
+  ONE_HANDED_BLUNT_WEAPON
+  TWO_HANDED_BLUNT_WEAPON
+  BOW
+  CROSSBOW
+  CLAW
+  DAGGER
+  SPEAR
+  POLEARM
+  WAND
+  STAFF
+  KNUCKLE
+  GUN
+
+  // Non equipments
+  USABLE_NOT_EQUIPMENT
+  OTHER_NOT_EQUIPMENT
+}
+
+enum Class {
+  COMMON
+  BOWMAN
+  MAGICIAN
+  PIRATE
+  THIEF
+  WARRIOR
+}
+
+model ItemMaster {
+  id               Int          @id @default(autoincrement())
+  name             String       @unique
+  category         ItemCategory
+  levelRequirement Int          @default(0)
+  classRequirement Class        @default(COMMON)
+  strRequirement   Int          @default(0)
+  dexRequirement   Int          @default(0)
+  intRequirement   Int          @default(0)
+  lukRequirement   Int          @default(0)
+  fameRequirement  Int          @default(0)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  Listing   Listing[]
+  // Consider adding @@fulltext([name])
+
+  @@index([name])
+}
+
+enum ListingStatus {
+  ACTIVE
+  COMPLETE
+  REMOVED_USER
+  REMOVED_COMMUNITY
+  REMOVED_ADMIN
+  EXPIRED
+}
+
+enum CurrencyType {
+  MESO
+  SNOWFLAKE
+}
+
+model Listing {
+  id           String        @id @default(cuid())
+  creatorId    String // Foreign key to User.id
+  creator      User          @relation(fields: [creatorId], references: [id])
+  itemMasterId Int // Foreign key to ItemMaster.id
+  itemMaster   ItemMaster    @relation(fields: [itemMasterId], references: [id])
+  itemName     String // Denormalized
+  status       ListingStatus @default(ACTIVE)
+  currency     CurrencyType  @default(MESO)
+  price        BigInt
+
+  // Dedicated Stats Columns for this specific equipment. Unused for other item types.
+  str                  Int @default(0)
+  dex                  Int @default(0)
+  int                  Int @default(0)
+  luk                  Int @default(0)
+  hp                   Int @default(0)
+  mp                   Int @default(0)
+  watk                 Int @default(0)
+  matk                 Int @default(0)
+  wdef                 Int @default(0)
+  mdef                 Int @default(0)
+  acc                  Int @default(0)
+  avoid                Int @default(0)
+  speed                Int @default(0)
+  jump                 Int @default(0)
+  availableScrollSlots Int @default(0)
+
+  // Item Requirements for equipments. Unused for other item types.
+  // Denormalized to avoid JOINs for filtering; can be auto-populated.
+  levelRequirement Int   @default(0)
+  classRequirement Class @default(COMMON)
+  strRequirement   Int   @default(0)
+  dexRequirement   Int   @default(0)
+  intRequirement   Int   @default(0)
+  lukRequirement   Int   @default(0)
+  fameRequirement  Int   @default(0)
+
+  // Future-Proofing (Initially unused or for non-searchable data)
+  extraData Json? @db.JsonB
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  expiresAt DateTime?
+
+  // Indexes - CRITICAL for Search Performance
+  // TODO: research if index on enum is helpful
+  // TODO: manually add functional index in raw sql
+  @@index([creatorId])
+  @@index([status])
+  @@index([price])
+  @@index([itemName])
+  @@index([levelRequirement])
+  @@index([classRequirement])
+  @@index([strRequirement])
+  @@index([dexRequirement])
+  @@index([intRequirement])
+  @@index([lukRequirement])
+  @@index([fameRequirement])
+  @@index([str])
+  @@index([dex])
+  @@index([int])
+  @@index([luk])
+  @@index([watk])
+  @@index([matk])
+  @@index([wdef])
+  @@index([mdef])
+  @@index([acc])
+  @@index([avoid])
+  @@index([speed])
+  @@index([jump])
+  @@index([availableScrollSlots])
+  @@index([createdAt])
+}
