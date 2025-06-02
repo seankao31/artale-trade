@@ -1,6 +1,6 @@
 {
-	"$schema": "https://inlang.com/schema/inlang-message-format",
-	"signin": "登入",
-	"introduction": "介紹文字介紹文字介紹文字介紹文字介紹文字介紹文字介紹文字介紹文字介紹文字介紹文字介紹文字介紹文字介紹文字介紹文字介紹文字介紹文字介紹文字介紹文字介紹文字介紹文字介紹文字介紹文字",
-	"listings": "查詢交易"
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "signin": "登入",
+  "introduction": "介紹文字介紹文字介紹文字介紹文字介紹文字介紹文字介紹文字介紹文字介紹文字介紹文字介紹文字介紹文字介紹文字介紹文字介紹文字介紹文字介紹文字介紹文字介紹文字介紹文字介紹文字介紹文字",
+  "listings": "查詢交易"
 }
