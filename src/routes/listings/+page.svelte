@@ -1,4 +1,8 @@
-<h3 class="h3">Listings</h3>
+<script>
+	import { m } from '$lib/paraglide/messages.js';
+</script>
+
+<h3 class="h3">{m.listings()}</h3>
 <div class="grid grid-cols-1 md:grid-cols-[auto_1fr_auto]">
 	<aside class="bg-yellow-500 p-4">(search filters)</aside>
 	<main class="space-y-4 bg-green-500 p-4">

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import '../app.css';
 	import { AppBar } from '@skeletonlabs/skeleton-svelte';
+	import { m } from '$lib/paraglide/messages.js';
 
 	import CircleUser from '@lucide/svelte/icons/circle-user';
 
@@ -13,7 +14,7 @@
 			<a href="/" class="h5">Artale Trade</a>
 		{/snippet}
 		{#snippet trail()}
-			<a href="/listings">Listings</a>
+			<a href="/listings">{m.listings()}</a>
 			<CircleUser size={25} />
 		{/snippet}
 	</AppBar>
