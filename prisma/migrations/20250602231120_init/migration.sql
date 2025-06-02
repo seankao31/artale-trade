@@ -2,19 +2,16 @@
 CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN');
 
 -- CreateEnum
-CREATE TYPE "EquipmentCategory" AS ENUM ('EARRING', 'EYE_ACCESSORY', 'FACE_ACCESSORY', 'PENDANT', 'BELT', 'MEDAL', 'RING', 'SHOULDERPAD', 'POCKET', 'HAT', 'TOP', 'BOTTOM', 'OVERALL', 'SHOES', 'GLOVES', 'CAPE', 'SHIELD', 'TAMING_MOB', 'ONE_HANDED_SWORD', 'TWO_HANDED_SWORD', 'ONE_HANDED_AXE', 'TWO_HANDED_AXE', 'ONE_HANDED_BLUNT_WEAPON', 'TWO_HANDED_BLUNT_WEAPON', 'BOW', 'CROSSBOW', 'CLAW', 'DAGGER', 'SPEAR', 'POLEARM', 'WAND', 'STAFF', 'KNUCKLE', 'GUN');
+CREATE TYPE "ItemCategory" AS ENUM ('EARRING', 'EYE_ACCESSORY', 'FACE_ACCESSORY', 'PENDANT', 'BELT', 'MEDAL', 'RING', 'SHOULDERPAD', 'POCKET', 'HAT', 'TOP', 'BOTTOM', 'OVERALL', 'SHOES', 'GLOVES', 'CAPE', 'SHIELD', 'TAMING_MOB', 'ONE_HANDED_SWORD', 'TWO_HANDED_SWORD', 'ONE_HANDED_AXE', 'TWO_HANDED_AXE', 'ONE_HANDED_BLUNT_WEAPON', 'TWO_HANDED_BLUNT_WEAPON', 'BOW', 'CROSSBOW', 'CLAW', 'DAGGER', 'SPEAR', 'POLEARM', 'WAND', 'STAFF', 'KNUCKLE', 'GUN', 'USABLE_NOT_EQUIPMENT', 'OTHER_NOT_EQUIPMENT');
 
 -- CreateEnum
-CREATE TYPE "Class" AS ENUM ('COMMON', 'BOWMAN', 'MAGICIAN', 'PIRATE', 'THIEF', 'WARRIOR');
+CREATE TYPE "Class" AS ENUM ('BEGINNER', 'BOWMAN', 'MAGICIAN', 'PIRATE', 'THIEF', 'WARRIOR');
 
 -- CreateEnum
-CREATE TYPE "ListingStatus" AS ENUM ('ACTIVE', 'COMPLETE', 'REMOVED_USER', 'REMOVED_ADMIN', 'EXPIRED');
+CREATE TYPE "ListingStatus" AS ENUM ('ACTIVE', 'COMPLETE', 'REMOVED_USER', 'REMOVED_COMMUNITY', 'REMOVED_ADMIN', 'EXPIRED');
 
 -- CreateEnum
 CREATE TYPE "CurrencyType" AS ENUM ('MESO', 'SNOWFLAKE');
-
--- CreateEnum
-CREATE TYPE "ItemType" AS ENUM ('EQUIPMENT');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -23,6 +20,7 @@ CREATE TABLE "User" (
     "isBanned" BOOLEAN NOT NULL DEFAULT false,
     "discordId" TEXT NOT NULL,
     "discordUsername" TEXT NOT NULL,
+    "displayDiscord" BOOLEAN NOT NULL DEFAULT false,
     "artaleId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -31,12 +29,12 @@ CREATE TABLE "User" (
 );
 
 -- CreateTable
-CREATE TABLE "EquipmentMaster" (
+CREATE TABLE "ItemMaster" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
-    "category" "EquipmentCategory" NOT NULL,
+    "category" "ItemCategory" NOT NULL,
     "levelRequirement" INTEGER NOT NULL DEFAULT 0,
-    "classRequirement" "Class" NOT NULL DEFAULT 'COMMON',
+    "classRequirement" "Class"[] DEFAULT ARRAY['BEGINNER']::"Class"[],
     "strRequirement" INTEGER NOT NULL DEFAULT 0,
     "dexRequirement" INTEGER NOT NULL DEFAULT 0,
     "intRequirement" INTEGER NOT NULL DEFAULT 0,
@@ -45,19 +43,18 @@ CREATE TABLE "EquipmentMaster" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "EquipmentMaster_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "ItemMaster_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Listing" (
     "id" TEXT NOT NULL,
     "creatorId" TEXT NOT NULL,
+    "itemMasterId" INTEGER NOT NULL,
     "itemName" TEXT NOT NULL,
-    "itemType" "ItemType" NOT NULL DEFAULT 'EQUIPMENT',
     "status" "ListingStatus" NOT NULL DEFAULT 'ACTIVE',
     "currency" "CurrencyType" NOT NULL DEFAULT 'MESO',
     "price" BIGINT NOT NULL,
-    "description" TEXT,
     "str" INTEGER NOT NULL DEFAULT 0,
     "dex" INTEGER NOT NULL DEFAULT 0,
     "int" INTEGER NOT NULL DEFAULT 0,
@@ -72,9 +69,9 @@ CREATE TABLE "Listing" (
     "avoid" INTEGER NOT NULL DEFAULT 0,
     "speed" INTEGER NOT NULL DEFAULT 0,
     "jump" INTEGER NOT NULL DEFAULT 0,
-    "availableSlots" INTEGER NOT NULL DEFAULT 0,
+    "availableScrollSlots" INTEGER NOT NULL DEFAULT 0,
     "levelRequirement" INTEGER NOT NULL DEFAULT 0,
-    "classRequirement" "Class" NOT NULL DEFAULT 'COMMON',
+    "classRequirement" "Class"[] DEFAULT ARRAY['BEGINNER']::"Class"[],
     "strRequirement" INTEGER NOT NULL DEFAULT 0,
     "dexRequirement" INTEGER NOT NULL DEFAULT 0,
     "intRequirement" INTEGER NOT NULL DEFAULT 0,
@@ -92,10 +89,10 @@ CREATE TABLE "Listing" (
 CREATE UNIQUE INDEX "User_discordId_key" ON "User"("discordId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "EquipmentMaster_name_key" ON "EquipmentMaster"("name");
+CREATE UNIQUE INDEX "ItemMaster_name_key" ON "ItemMaster"("name");
 
 -- CreateIndex
-CREATE INDEX "EquipmentMaster_name_idx" ON "EquipmentMaster"("name");
+CREATE INDEX "ItemMaster_name_idx" ON "ItemMaster"("name");
 
 -- CreateIndex
 CREATE INDEX "Listing_creatorId_idx" ON "Listing"("creatorId");
@@ -113,7 +110,7 @@ CREATE INDEX "Listing_itemName_idx" ON "Listing"("itemName");
 CREATE INDEX "Listing_levelRequirement_idx" ON "Listing"("levelRequirement");
 
 -- CreateIndex
-CREATE INDEX "Listing_classRequirement_idx" ON "Listing"("classRequirement");
+CREATE INDEX "Listing_classRequirement_idx" ON "Listing" USING GIN ("classRequirement");
 
 -- CreateIndex
 CREATE INDEX "Listing_strRequirement_idx" ON "Listing"("strRequirement");
@@ -167,10 +164,13 @@ CREATE INDEX "Listing_speed_idx" ON "Listing"("speed");
 CREATE INDEX "Listing_jump_idx" ON "Listing"("jump");
 
 -- CreateIndex
-CREATE INDEX "Listing_availableSlots_idx" ON "Listing"("availableSlots");
+CREATE INDEX "Listing_availableScrollSlots_idx" ON "Listing"("availableScrollSlots");
 
 -- CreateIndex
 CREATE INDEX "Listing_createdAt_idx" ON "Listing"("createdAt");
 
 -- AddForeignKey
 ALTER TABLE "Listing" ADD CONSTRAINT "Listing_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Listing" ADD CONSTRAINT "Listing_itemMasterId_fkey" FOREIGN KEY ("itemMasterId") REFERENCES "ItemMaster"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

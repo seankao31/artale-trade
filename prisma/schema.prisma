@@ -88,7 +88,7 @@ enum ItemCategory {
 }
 
 enum Class {
-  COMMON
+  BEGINNER
   BOWMAN
   MAGICIAN
   PIRATE
@@ -101,7 +101,7 @@ model ItemMaster {
   name             String       @unique
   category         ItemCategory
   levelRequirement Int          @default(0)
-  classRequirement Class        @default(COMMON)
+  classRequirement Class[]      @default([BEGINNER])
   strRequirement   Int          @default(0)
   dexRequirement   Int          @default(0)
   intRequirement   Int          @default(0)
@@ -160,13 +160,13 @@ model Listing {
 
   // Item Requirements for equipments. Unused for other item types.
   // Denormalized to avoid JOINs for filtering; can be auto-populated.
-  levelRequirement Int   @default(0)
-  classRequirement Class @default(COMMON)
-  strRequirement   Int   @default(0)
-  dexRequirement   Int   @default(0)
-  intRequirement   Int   @default(0)
-  lukRequirement   Int   @default(0)
-  fameRequirement  Int   @default(0)
+  levelRequirement Int     @default(0)
+  classRequirement Class[] @default([BEGINNER])
+  strRequirement   Int     @default(0)
+  dexRequirement   Int     @default(0)
+  intRequirement   Int     @default(0)
+  lukRequirement   Int     @default(0)
+  fameRequirement  Int     @default(0)
 
   // Future-Proofing (Initially unused or for non-searchable data)
   extraData Json? @db.JsonB
@@ -183,7 +183,7 @@ model Listing {
   @@index([price])
   @@index([itemName])
   @@index([levelRequirement])
-  @@index([classRequirement])
+  @@index([classRequirement], type: Gin)
   @@index([strRequirement])
   @@index([dexRequirement])
   @@index([intRequirement])
