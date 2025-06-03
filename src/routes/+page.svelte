@@ -13,11 +13,11 @@
       {#if page.data.session.user?.image}
         <img src={page.data.session.user.image} alt="User Profile" />
       {/if}
-      <button class="btn preset-filled-primary-500 btn-base" on:click={() => signOut()}>
+      <button class="btn preset-filled-primary-500 btn-base" onclick={() => signOut()}>
         {m.signout()}
       </button>
     {:else}
-      <button class="btn preset-filled-primary-500 btn-base" on:click={() => signIn('discord')}>
+      <button class="btn preset-filled-primary-500 btn-base" onclick={() => signIn('discord')}>
         {m.signin()}
       </button>
     {/if}

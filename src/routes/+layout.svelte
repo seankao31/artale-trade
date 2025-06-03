@@ -2,8 +2,9 @@
   import '../app.css';
   import { AppBar } from '@skeletonlabs/skeleton-svelte';
   import { m } from '$lib/paraglide/messages.js';
-
-  import CircleUser from '@lucide/svelte/icons/circle-user';
+  import { page } from '$app/state';
+  import { signIn, signOut } from '@auth/sveltekit/client';
+  import { Avatar } from '@skeletonlabs/skeleton-svelte';
 
   let { children } = $props();
 </script>
@@ -15,7 +16,22 @@
     {/snippet}
     {#snippet trail()}
       <a href="/listings">{m.listings()}</a>
-      <CircleUser size={25} />
+      {#if page.data.session}
+        {#if page.data.session.user?.image}
+          <button class="btn preset-filled-primary-500 btn-base" onclick={() => signOut()}>
+            {m.signout()}
+          </button>
+          <Avatar
+            size="size-9"
+            src={page.data.session.user.image}
+            name={page.data.session.user.name ?? 'User'}
+          />
+        {/if}
+      {:else}
+        <button class="btn preset-filled-primary-500 btn-base" onclick={() => signIn('discord')}>
+          {m.signin()}
+        </button>
+      {/if}
     {/snippet}
   </AppBar>
   <div class="grid grid-cols-1 md:grid-cols-[auto_1fr_auto]">
