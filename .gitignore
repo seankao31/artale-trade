@@ -25,7 +25,5 @@ vite.config.ts.timestamp-*
 
 /docker-data
 
-/generated/prisma
-
 # Paraglide
 src/lib/paraglide
