@@ -6,5 +6,5 @@ export const {
   signIn,
   signOut
 } = SvelteKitAuth({
-  providers: [Discord]
+  providers: [Discord({ authorization: { params: { scope: 'identify' } } })]
 });
