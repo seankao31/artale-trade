@@ -10,6 +10,9 @@
     <p class="p-4">{m.introduction()}</p>
     {#if page.data.session}
       <p>{m.hello({ name: page.data.session.user?.name ?? 'User' })}</p>
+      {#if page.data.session.user?.image}
+        <img src={page.data.session.user.image} alt="User Profile" />
+      {/if}
       <button class="btn preset-filled-primary-500 btn-base" on:click={() => signOut()}>
         {m.signout()}
       </button>
