@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { m } from '$lib/paraglide/messages.js';
   import { signIn, signOut } from '@auth/sveltekit/client';
   import { page } from '$app/state';
