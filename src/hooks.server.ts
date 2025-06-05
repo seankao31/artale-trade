@@ -6,8 +6,6 @@ import { paraglideMiddleware } from '$lib/paraglide/server';
 
 const handleProtected: Handle = async ({ event, resolve }) => {
   const session = await event.locals.auth();
-  console.log(session);
-  console.log(event.route.id);
   if (event.route.id?.includes('/(protected)/') && !session) {
     redirect(302, '/');
   }
