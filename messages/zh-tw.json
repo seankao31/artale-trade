@@ -10,7 +10,7 @@
   "tradeType": "交易類型",
   "wantToSell": "出售",
   "wantToBuy": "收購",
-  "itemType": "道具類型",
+  "itemListingType": "道具類型",
   "equipment": "裝備",
   "notEquipment": "非裝備",
   "itemName": "道具名稱",
