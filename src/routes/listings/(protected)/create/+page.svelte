@@ -27,7 +27,6 @@
 <!-- TODO: better layout and styling -->
 <!-- TODO: customize validation message -->
 <!-- TODO: mark all required fields -->
-<!-- TODO: verify login -->
 {#if form?.error}
   <p class="error">{form.error}</p>
 {/if}
