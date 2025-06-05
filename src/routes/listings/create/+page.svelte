@@ -2,7 +2,7 @@
   import { m } from '$lib/paraglide/messages.js';
 
   let itemType = $state('equipment');
-  let { form } = $props();
+  let { data, form } = $props();
   let equipmentStatsText = {
     str: m.str(),
     dex: m.dex(),
@@ -27,6 +27,7 @@
 <!-- TODO: better layout and styling -->
 <!-- TODO: customize validation message -->
 <!-- TODO: mark all required fields -->
+<!-- TODO: verify login -->
 {#if form?.error}
   <p class="error">{form.error}</p>
 {/if}
@@ -88,8 +89,9 @@
       <div class="input-group grid-cols-[1fr_auto]">
         <input class="ig-input" type="number" name="price-amount" required />
         <select class="ig-select" name="price-currency">
-          <option>{m.meso()}</option>
-          <option>{m.snowflake()}</option>
+          {#each data.currencyTypes as currencyType}
+            <option value={currencyType}>{m[currencyType]()}</option>
+          {/each}
         </select>
       </div>
     </label>
