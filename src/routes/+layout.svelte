@@ -1,7 +1,7 @@
 <script lang="ts">
   import '../app.css';
   import { AppBar } from '@skeletonlabs/skeleton-svelte';
-  import { m } from '$lib/paraglide/messages.js';
+  import { m } from '$lib/paraglide/messages';
   import { page } from '$app/state';
   import { signIn, signOut } from '@auth/sveltekit/client';
   import { Avatar } from '@skeletonlabs/skeleton-svelte';

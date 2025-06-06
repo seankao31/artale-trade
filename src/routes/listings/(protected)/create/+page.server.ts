@@ -1,11 +1,11 @@
 import { CurrencyType } from '@prisma/client';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import type { Actions } from './$types.js';
+import type { Actions, PageServerLoad } from './$types';
 import { superValidate, message } from 'sveltekit-superforms/server';
 import { fail } from '@sveltejs/kit';
-import { CreateListingRequestSchema } from './schema.js';
+import { CreateListingRequestSchema } from './schema';
 
-export const load = async () => {
+export const load: PageServerLoad = async () => {
   const form = await superValidate(zod4(CreateListingRequestSchema));
   return {
     currencyTypes: Object.values(CurrencyType),

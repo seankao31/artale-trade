@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { m } from '$lib/paraglide/messages.js';
+  import { m } from '$lib/paraglide/messages';
 </script>
 
 <h3 class="h3">{m.listings()}</h3>

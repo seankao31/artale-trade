@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { m } from '$lib/paraglide/messages.js';
+  import { m } from '$lib/paraglide/messages';
   import SuperDebug, { superForm } from 'sveltekit-superforms';
-  import { CreateListingRequestSchema } from './schema.js';
+  import { CreateListingRequestSchema } from './schema';
   import { page } from '$app/state';
   import { zod4Client } from 'sveltekit-superforms/adapters';
 
