@@ -19,17 +19,17 @@ enum Role {
 }
 
 model User {
-  id            String          @id @default(cuid())
+  id            String    @id @default(cuid())
   name          String
-  email         String          @unique
+  email         String    @unique
   emailVerified DateTime?
   image         String
 
-  accounts      Account[]
-  sessions      Session[]
- 
-  role     Role    @default(USER)
-  isBanned Boolean @default(false)
+  accounts Account[]
+  sessions Session[]
+
+  role     Role      @default(USER)
+  isBanned Boolean   @default(false)
   listings Listing[]
 
   createdAt DateTime @default(now())
@@ -48,30 +48,30 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
- 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
- 
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@id([provider, providerAccountId])
 }
- 
+
 model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
- 
+
 model VerificationToken {
   identifier String
   token      String
   expires    DateTime
- 
+
   @@id([identifier, token])
 }
 
@@ -120,6 +120,7 @@ enum ItemCategory {
   // Non equipments
   USABLE_NOT_EQUIPMENT
   OTHER_NOT_EQUIPMENT
+  CASH_NOT_EQUIPMENT
 }
 
 enum Class {
@@ -146,7 +147,8 @@ model ItemMaster {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   Listing   Listing[]
-  // Consider adding @@fulltext([name])
+  // TODO: Consider adding @@fulltext([name])
+  // TODO: Consider adding alias names
 
   @@index([name])
 }
@@ -168,10 +170,10 @@ enum CurrencyType {
 model Listing {
   id           String        @id @default(cuid())
   creatorId    String // Foreign key to User.id
-  creator      User          @relation(fields: [creatorId], references: [id])
+  creator      User          @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   itemMasterId Int // Foreign key to ItemMaster.id
-  itemMaster   ItemMaster    @relation(fields: [itemMasterId], references: [id])
-  itemName     String // Denormalized
+  itemMaster   ItemMaster    @relation(fields: [itemMasterId], references: [id], onDelete: Cascade)
+  itemName     String // Denormalized for display
   status       ListingStatus @default(ACTIVE)
   currency     CurrencyType  @default(MESO)
   price        BigInt
@@ -193,15 +195,12 @@ model Listing {
   jump                 Int @default(0)
   availableScrollSlots Int @default(0)
 
+  itemCategory ItemCategory
+
   // Item Requirements for equipments. Unused for other item types.
   // Denormalized to avoid JOINs for filtering; can be auto-populated.
   levelRequirement Int     @default(0)
   classRequirement Class[] @default([BEGINNER])
-  strRequirement   Int     @default(0)
-  dexRequirement   Int     @default(0)
-  intRequirement   Int     @default(0)
-  lukRequirement   Int     @default(0)
-  fameRequirement  Int     @default(0)
 
   // Future-Proofing (Initially unused or for non-searchable data)
   extraData Json? @db.JsonB
@@ -216,14 +215,11 @@ model Listing {
   @@index([creatorId])
   @@index([status])
   @@index([price])
-  @@index([itemName])
+  @@index([currency])
+  @@index([itemMasterId])
+  @@index([itemCategory])
   @@index([levelRequirement])
   @@index([classRequirement], type: Gin)
-  @@index([strRequirement])
-  @@index([dexRequirement])
-  @@index([intRequirement])
-  @@index([lukRequirement])
-  @@index([fameRequirement])
   @@index([str])
   @@index([dex])
   @@index([int])
@@ -237,5 +233,5 @@ model Listing {
   @@index([speed])
   @@index([jump])
   @@index([availableScrollSlots])
-  @@index([createdAt])
+  @@index([updatedAt])
 }

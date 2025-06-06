@@ -2,7 +2,7 @@
 CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN');
 
 -- CreateEnum
-CREATE TYPE "ItemCategory" AS ENUM ('EARRING', 'EYE_ACCESSORY', 'FACE_ACCESSORY', 'PENDANT', 'BELT', 'MEDAL', 'RING', 'SHOULDERPAD', 'POCKET', 'HAT', 'TOP', 'BOTTOM', 'OVERALL', 'SHOES', 'GLOVES', 'CAPE', 'SHIELD', 'TAMING_MOB', 'ONE_HANDED_SWORD', 'TWO_HANDED_SWORD', 'ONE_HANDED_AXE', 'TWO_HANDED_AXE', 'ONE_HANDED_BLUNT_WEAPON', 'TWO_HANDED_BLUNT_WEAPON', 'BOW', 'CROSSBOW', 'CLAW', 'DAGGER', 'SPEAR', 'POLEARM', 'WAND', 'STAFF', 'KNUCKLE', 'GUN', 'USABLE_NOT_EQUIPMENT', 'OTHER_NOT_EQUIPMENT');
+CREATE TYPE "ItemCategory" AS ENUM ('EARRING', 'EYE_ACCESSORY', 'FACE_ACCESSORY', 'PENDANT', 'BELT', 'MEDAL', 'RING', 'SHOULDERPAD', 'POCKET', 'HAT', 'TOP', 'BOTTOM', 'OVERALL', 'SHOES', 'GLOVES', 'CAPE', 'SHIELD', 'TAMING_MOB', 'ONE_HANDED_SWORD', 'TWO_HANDED_SWORD', 'ONE_HANDED_AXE', 'TWO_HANDED_AXE', 'ONE_HANDED_BLUNT_WEAPON', 'TWO_HANDED_BLUNT_WEAPON', 'BOW', 'CROSSBOW', 'CLAW', 'DAGGER', 'SPEAR', 'POLEARM', 'WAND', 'STAFF', 'KNUCKLE', 'GUN', 'USABLE_NOT_EQUIPMENT', 'OTHER_NOT_EQUIPMENT', 'CASH_NOT_EQUIPMENT');
 
 -- CreateEnum
 CREATE TYPE "Class" AS ENUM ('BEGINNER', 'BOWMAN', 'MAGICIAN', 'PIRATE', 'THIEF', 'WARRIOR');
@@ -107,13 +107,9 @@ CREATE TABLE "Listing" (
     "speed" INTEGER NOT NULL DEFAULT 0,
     "jump" INTEGER NOT NULL DEFAULT 0,
     "availableScrollSlots" INTEGER NOT NULL DEFAULT 0,
+    "itemCategory" "ItemCategory" NOT NULL,
     "levelRequirement" INTEGER NOT NULL DEFAULT 0,
     "classRequirement" "Class"[] DEFAULT ARRAY['BEGINNER']::"Class"[],
-    "strRequirement" INTEGER NOT NULL DEFAULT 0,
-    "dexRequirement" INTEGER NOT NULL DEFAULT 0,
-    "intRequirement" INTEGER NOT NULL DEFAULT 0,
-    "lukRequirement" INTEGER NOT NULL DEFAULT 0,
-    "fameRequirement" INTEGER NOT NULL DEFAULT 0,
     "extraData" JSONB,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -144,28 +140,19 @@ CREATE INDEX "Listing_status_idx" ON "Listing"("status");
 CREATE INDEX "Listing_price_idx" ON "Listing"("price");
 
 -- CreateIndex
-CREATE INDEX "Listing_itemName_idx" ON "Listing"("itemName");
+CREATE INDEX "Listing_currency_idx" ON "Listing"("currency");
+
+-- CreateIndex
+CREATE INDEX "Listing_itemMasterId_idx" ON "Listing"("itemMasterId");
+
+-- CreateIndex
+CREATE INDEX "Listing_itemCategory_idx" ON "Listing"("itemCategory");
 
 -- CreateIndex
 CREATE INDEX "Listing_levelRequirement_idx" ON "Listing"("levelRequirement");
 
 -- CreateIndex
 CREATE INDEX "Listing_classRequirement_idx" ON "Listing" USING GIN ("classRequirement");
-
--- CreateIndex
-CREATE INDEX "Listing_strRequirement_idx" ON "Listing"("strRequirement");
-
--- CreateIndex
-CREATE INDEX "Listing_dexRequirement_idx" ON "Listing"("dexRequirement");
-
--- CreateIndex
-CREATE INDEX "Listing_intRequirement_idx" ON "Listing"("intRequirement");
-
--- CreateIndex
-CREATE INDEX "Listing_lukRequirement_idx" ON "Listing"("lukRequirement");
-
--- CreateIndex
-CREATE INDEX "Listing_fameRequirement_idx" ON "Listing"("fameRequirement");
 
 -- CreateIndex
 CREATE INDEX "Listing_str_idx" ON "Listing"("str");
@@ -207,7 +194,7 @@ CREATE INDEX "Listing_jump_idx" ON "Listing"("jump");
 CREATE INDEX "Listing_availableScrollSlots_idx" ON "Listing"("availableScrollSlots");
 
 -- CreateIndex
-CREATE INDEX "Listing_createdAt_idx" ON "Listing"("createdAt");
+CREATE INDEX "Listing_updatedAt_idx" ON "Listing"("updatedAt");
 
 -- AddForeignKey
 ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -216,7 +203,7 @@ ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId"
 ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Listing" ADD CONSTRAINT "Listing_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Listing" ADD CONSTRAINT "Listing_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Listing" ADD CONSTRAINT "Listing_itemMasterId_fkey" FOREIGN KEY ("itemMasterId") REFERENCES "ItemMaster"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Listing" ADD CONSTRAINT "Listing_itemMasterId_fkey" FOREIGN KEY ("itemMasterId") REFERENCES "ItemMaster"("id") ON DELETE CASCADE ON UPDATE CASCADE;
