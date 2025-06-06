@@ -2,7 +2,6 @@
   import { m } from '$lib/paraglide/messages';
   import { signIn, signOut } from '@auth/sveltekit/client';
   import { page } from '$app/state';
-  console.log(page.data);
 </script>
 
 <div class="flex justify-center">
