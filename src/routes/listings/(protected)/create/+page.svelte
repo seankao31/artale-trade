@@ -49,7 +49,6 @@
 
 <!-- TODO: better layout and styling -->
 <!-- TODO: customize validation message -->
-<!-- TODO: mark all required fields -->
 <!-- TODO: i18n for error message -->
 <!-- TODO: blur number input on scroll -->
 <form class="m-3 flex flex-col gap-3" method="POST" use:enhance>

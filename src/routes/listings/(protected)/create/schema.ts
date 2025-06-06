@@ -8,12 +8,17 @@ export const CreateListingRequestSchema = z.object({
   // TODO: provide itemMasterId instead
   itemName: z.string().trim().min(1).max(30),
   itemQuantity: z.int().positive().max(100).default(1),
-  // TODO: https://github.com/ciscoheat/sveltekit-superforms/issues/598
-  // TODO: don't populate 0 by default
-  priceAmount: z.int().positive(),
+  // TODO: bigint with zod v4 issue: https://github.com/ciscoheat/sveltekit-superforms/issues/598
+  priceAmount: z
+    .int()
+    .positive()
+    .default(null as unknown as number),
   priceCurrency: z.enum(CurrencyType).default(CurrencyType.MESO),
-  // TODO: don't populate 0 by default
-  availableScrollSlots: z.int().nonnegative().max(10),
+  availableScrollSlots: z
+    .int()
+    .nonnegative()
+    .max(10)
+    .default(null as unknown as number),
 
   // TODO: smallint for both prisma and zod
   str: z.optional(z.int().nonnegative().max(1000)),
