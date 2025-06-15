@@ -1,4 +1,4 @@
-import { CurrencyType, Class } from '@prisma/client';
+import { CurrencyType, Class, TradeType } from '@prisma/client';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import type { Actions, PageServerLoad } from './$types';
 import { superValidate, message } from 'sveltekit-superforms/server';
@@ -10,6 +10,7 @@ export const load: PageServerLoad = async () => {
   const form = await superValidate(zod4(CreateListingRequestSchema));
   return {
     currencyTypes: Object.values(CurrencyType),
+    tradeTypes: Object.values(TradeType),
     form
   };
 };
@@ -36,7 +37,7 @@ export const actions = {
           itemName: form.data.itemName, // TODO
           currency: form.data.priceCurrency,
           price: form.data.priceAmount,
-          // TODO: wts, wtb
+          tradeType: form.data.tradeType,
 
           // TODO: load from ItemMaster
           itemCategory: 'EARRING',

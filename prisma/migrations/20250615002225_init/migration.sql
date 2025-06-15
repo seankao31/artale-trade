@@ -11,6 +11,9 @@ CREATE TYPE "Class" AS ENUM ('BEGINNER', 'BOWMAN', 'MAGICIAN', 'PIRATE', 'THIEF'
 CREATE TYPE "ListingStatus" AS ENUM ('ACTIVE', 'COMPLETE', 'REMOVED_USER', 'REMOVED_COMMUNITY', 'REMOVED_ADMIN', 'EXPIRED');
 
 -- CreateEnum
+CREATE TYPE "TradeType" AS ENUM ('WANT_TO_SELL', 'WANT_TO_BUY');
+
+-- CreateEnum
 CREATE TYPE "CurrencyType" AS ENUM ('MESO', 'SNOWFLAKE');
 
 -- CreateTable
@@ -90,6 +93,7 @@ CREATE TABLE "Listing" (
     "itemMasterId" INTEGER NOT NULL,
     "itemName" TEXT NOT NULL,
     "status" "ListingStatus" NOT NULL DEFAULT 'ACTIVE',
+    "tradeType" "TradeType" NOT NULL DEFAULT 'WANT_TO_SELL',
     "currency" "CurrencyType" NOT NULL DEFAULT 'MESO',
     "price" BIGINT NOT NULL,
     "str" INTEGER NOT NULL DEFAULT 0,
@@ -141,6 +145,9 @@ CREATE INDEX "Listing_price_idx" ON "Listing"("price");
 
 -- CreateIndex
 CREATE INDEX "Listing_currency_idx" ON "Listing"("currency");
+
+-- CreateIndex
+CREATE INDEX "Listing_tradeType_idx" ON "Listing"("tradeType");
 
 -- CreateIndex
 CREATE INDEX "Listing_itemMasterId_idx" ON "Listing"("itemMasterId");

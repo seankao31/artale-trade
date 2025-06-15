@@ -1,9 +1,8 @@
-import { CurrencyType } from '@prisma/client';
+import { CurrencyType, TradeType } from '@prisma/client';
 import { z } from 'zod/v4';
 
 export const CreateListingRequestSchema = z.object({
-  // TODO: enum from prisma
-  tradeType: z.enum(['wts', 'wtb']).default('wts'),
+  tradeType: z.enum(TradeType).default(TradeType.WANT_TO_SELL),
   itemListingType: z.enum(['equipment', 'notEquipment']).default('equipment'),
   // TODO: provide itemMasterId instead
   itemName: z.string().trim().min(1).max(30),

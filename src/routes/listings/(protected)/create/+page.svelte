@@ -12,8 +12,6 @@
 
   // For programmatically rendering fields with i18n
   const fieldText = {
-    wts: m.wantToSell(),
-    wtb: m.wantToBuy(),
     equipment: m.equipment(),
     notEquipment: m.notEquipment(),
 
@@ -56,22 +54,22 @@
     <label class="label">
       <span class="label-text">{m.tradeType()}</span>
       <div class="flex gap-3">
-        <!-- TODO: db schema for wts/wtb -->
         <!-- TODO: floating tooltip: unavailable -->
-        {#each ['wts', 'wtb'] as tradeType}
+        {#each data.tradeTypes as tradeType}
+          <!-- TODO: Remove constant value WANT_TO_BUY -->
           <label class="flex cursor-pointer items-center gap-1">
             <input
               class="radio"
               type="radio"
               name="tradeType"
               value={tradeType}
-              disabled={tradeType === 'wtb'}
+              disabled={tradeType === 'WANT_TO_BUY'}
               bind:group={$form.tradeType}
             />
             {#if $errors.tradeType}
               <small class="text-error-500">{$errors.tradeType}</small>
             {/if}
-            <span class="label-text">{fieldText[tradeType as keyof typeof fieldText]}</span>
+            <span class="label-text">{m[tradeType]()}</span>
           </label>
         {/each}
       </div>

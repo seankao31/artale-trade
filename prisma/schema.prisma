@@ -162,6 +162,11 @@ enum ListingStatus {
   EXPIRED
 }
 
+enum TradeType {
+  WANT_TO_SELL
+  WANT_TO_BUY
+}
+
 enum CurrencyType {
   MESO
   SNOWFLAKE
@@ -175,6 +180,7 @@ model Listing {
   itemMaster   ItemMaster    @relation(fields: [itemMasterId], references: [id], onDelete: Cascade)
   itemName     String // Denormalized for display
   status       ListingStatus @default(ACTIVE)
+  tradeType    TradeType     @default(WANT_TO_SELL)
   currency     CurrencyType  @default(MESO)
   price        BigInt
 
@@ -209,13 +215,13 @@ model Listing {
   updatedAt DateTime  @updatedAt
   expiresAt DateTime?
 
-  // Indexes - CRITICAL for Search Performance
   // TODO: research if index on enum is helpful
   // TODO: manually add functional index in raw sql
   @@index([creatorId])
   @@index([status])
   @@index([price])
   @@index([currency])
+  @@index([tradeType])
   @@index([itemMasterId])
   @@index([itemCategory])
   @@index([levelRequirement])
